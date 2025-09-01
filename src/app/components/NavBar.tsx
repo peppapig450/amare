@@ -20,7 +20,7 @@ export const NavBar = () => {
           {navLinks.map(({ href, label, icon }) => (
             <li key={href} className="flex items-center gap-1">
               <Link href={href} className="flex items-center gap-1 hover:underline">
-                {icon != null ? icon : null}
+                {icon ?? null}
                 {label}
               </Link>
             </li>
