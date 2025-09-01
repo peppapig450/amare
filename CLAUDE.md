@@ -18,50 +18,77 @@ This is a relationship tracker web application built with Next.js where couples 
 ### Framework & Build Tools
 - **Next.js 15.5.2** with App Router architecture
 - **Turbopack** enabled for faster development and builds
-- **TypeScript** with strict mode enabled
-- **PNPM** as package manager
+- **TypeScript** with strict mode enabled and ES2017 target
+- **PNPM** v10.15.1 as package manager
 
-### Styling
+### UI Framework & Styling
 - **Tailwind CSS v4** with new `@theme inline` syntax and PostCSS plugin
-- **CSS variables** for theming (supports light/dark mode)
-- **Geist fonts** (Sans and Mono variants) via next/font/google
+- **Headless UI v2.2.7** for accessible component primitives
+- **CSS variables** for theming (supports automatic light/dark mode)
+- **Geist fonts** (Sans and Mono variants) via next/font/google optimization
 
 ### Code Quality
-- **ESLint** with Next.js TypeScript configuration
+- **ESLint v9** with Next.js TypeScript configuration
 - **Flat config format** (eslint.config.mjs) with Next.js core web vitals rules
+- Ignores: node_modules, .next, out, build, next-env.d.ts
 
 ## Project Structure
 
 ```
 src/
-  app/                    # Next.js App Router directory
-    layout.tsx           # Root layout with font configuration and metadata
-    page.tsx             # Home page component  
-    globals.css          # Global styles with Tailwind imports and CSS variables
-    favicon.ico          # App favicon
-public/                  # Static assets (SVG icons, images)
+  app/                         # Next.js App Router directory
+    components/                # Shared UI components
+      NavBar.tsx              # Navigation component with routing links
+      Footer.tsx              # Footer component with copyright
+    layout.tsx                # Root layout with fonts, NavBar, Footer
+    page.tsx                  # Home page (currently Next.js starter content)
+    globals.css               # Global styles with Tailwind and theme variables
+    favicon.ico               # App favicon
+public/                       # Static assets (SVG icons, images)
 ```
 
-## Key Architectural Details
+## Component Architecture
 
-### Styling System
-- Uses Tailwind CSS v4's new inline theme syntax in globals.css
-- CSS custom properties for colors: `--background`, `--foreground`
-- Automatic dark mode support via `prefers-color-scheme`
-- Font variables from Next.js font optimization: `--font-geist-sans`, `--font-geist-mono`
+### Layout System
+- **Root Layout** (`layout.tsx`): Configures fonts, metadata, and overall page structure
+  - Uses flexbox layout: `min-h-screen flex flex-col`
+  - NavBar (sticky header), main content (flex-1), Footer (sticky bottom)
+  - Font optimization with Geist Sans and Mono variants
 
-### TypeScript Configuration
-- Path mapping: `@/*` resolves to `./src/*`
-- Strict mode enabled with ES2017 target
-- Next.js plugin integrated for optimal TypeScript experience
+### Navigation Architecture
+- **NavBar component**: Sticky header with navigation links
+  - Defines routing structure: Dashboard (`/dashboard`), Timeline (`/timeline`), Settings (`/settings`)
+  - Uses Next.js Link component for client-side navigation
+  - Supports optional icons for nav items
 
-### Package Management
-- Uses PNPM with workspace configuration
-- React 19.1.0 with latest Next.js 15.5.2
-- Minimal dependencies focused on core functionality
+### Styling Architecture
+- **Global CSS** (`globals.css`):
+  - Tailwind v4 `@theme inline` syntax for theme configuration
+  - CSS custom properties: `--background`, `--foreground` with automatic dark mode
+  - Font family integration with Geist font variables
+  - Main content padding: 4rem top/bottom
+
+## TypeScript Configuration
+
+- **Path mapping**: `@/*` resolves to `./src/*` for clean imports
+- **Strict mode** enabled with comprehensive type checking
+- **Next.js plugin** integrated for optimal development experience
+- **Module resolution**: bundler strategy for modern dependency handling
+
+## Key Dependencies
+
+### Core Framework
+- `next@15.5.2` - React framework with App Router
+- `react@19.1.0` & `react-dom@19.1.0` - Latest React runtime
+
+### UI & Styling
+- `@headlessui/react@2.2.7` - Unstyled, accessible UI components
+- `tailwindcss@4` - Utility-first CSS framework
+- `@tailwindcss/postcss@4` - PostCSS plugin for Tailwind v4
 
 ## Development Notes
 
-- The project currently contains the default Next.js starter content and needs to be customized for the relationship tracking functionality
-- Turbopack is enabled for both development and production builds for improved performance
-- All SVG assets are optimized and use Next.js Image component for performance
+- **Current State**: Contains custom NavBar/Footer components but main page still has Next.js starter content
+- **Navigation Structure**: Already defines app routes (Dashboard, Timeline, Settings) but pages not yet implemented
+- **Theme System**: Fully configured for light/dark mode with CSS custom properties
+- **Performance**: Turbopack enabled for fast development and production builds
