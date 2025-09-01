@@ -8,3 +8,4 @@ public
 *.yaml
 .claude/
 CLAUDE.md
+tsconfig.json
