@@ -1,7 +1,6 @@
-// eslint.config.mjs
 // @ts-check
 import { FlatCompat } from "@eslint/eslintrc"
-import eslint from "@eslint/js"
+import js from "@eslint/js"
 import nextPlugin from "@next/eslint-plugin-next"
 import prettierRecommended from "eslint-plugin-prettier/recommended"
 import tseslint from "typescript-eslint"
@@ -9,7 +8,7 @@ import tseslint from "typescript-eslint"
 const compat = new FlatCompat({ baseDirectory: import.meta.dirname })
 
 export default tseslint.config(
-  // 0) GLOBAL ignores — no `files` here so they always apply
+  // 0) global ignores (replacement for .eslintignore)
   {
     ignores: [
       "**/node_modules/**",
@@ -23,26 +22,27 @@ export default tseslint.config(
     ],
   },
 
-  // 1) Next.js rules (compat converts legacy `extends` to flat)
+  // 1) Next.js rules (via FlatCompat for the legacy shareable config)
   ...compat.config({ extends: ["next/core-web-vitals"] }),
-  // make the Next plugin available (some rules expect it registered)
+  // Ensure the Next plugin is registered under the expected key
   { plugins: { "@next/next": nextPlugin } },
 
-  // 2) (Optional) Base JS rules for JS in src
-  { files: ["src/**/*.{js,jsx}"], ...eslint.configs.recommended },
+  // 2) Base JS for any plain JS files you might have
+  { files: ["src/**/*.{js,jsx}"], ...js.configs.recommended },
 
-  // 3) Type-aware TS rules — ONLY for src TS/TSX
+  // 3) Type-aware TS/TSX
   {
     files: ["src/**/*.{ts,tsx}"],
     extends: [
       ...tseslint.configs.recommendedTypeChecked,
       ...tseslint.configs.stylisticTypeChecked,
-      prettierRecommended,
+      prettierRecommended, // keep last to avoid formatting rule conflicts
     ],
     languageOptions: {
-      parser: tseslint.parser,
+      // tseslint.configs already wires parser+plugin; we only add parserOptions
       parserOptions: {
-        project: "./tsconfig.json",
+        // modern, faster way to enable type-aware linting across the project
+        projectService: true,
         tsconfigRootDir: import.meta.dirname,
         ecmaVersion: "latest",
         sourceType: "module",
@@ -50,7 +50,6 @@ export default tseslint.config(
       },
     },
     rules: {
-      // your rules:
       "@typescript-eslint/consistent-type-imports": [
         "error",
         { prefer: "type-imports", disallowTypeAnnotations: false },
