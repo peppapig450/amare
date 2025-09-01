@@ -1,0 +1,35 @@
+import Link from "next/link";
+
+interface NavLink {
+  href: string;
+  label: string;
+  icon?: React.ReactNode;
+}
+
+const navLinks: NavLink[] = [
+  { href: "/dashboard", label: "Dashboard" },
+  { href: "/timeline", label: "Timeline" },
+  { href: "/settings", label: "Settings" },
+];
+
+export const NavBar = () => {
+  return (
+    <header className="sticky top-0 z-50 h-16 bg-gray-100 shadow flex items-center justify-center">
+      <nav>
+        <ul className="flex gap-4">
+          {navLinks.map(({ href, label, icon }) => (
+            <li key={href} className="flex items-center gap-1">
+              <Link
+                href={href}
+                className="hover:underline flex items-center gap-1"
+              >
+                {icon != null ? icon : null}
+                {label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </header>
+  );
+};
