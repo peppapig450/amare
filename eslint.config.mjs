@@ -17,7 +17,7 @@ export default tseslint.config(
       "**/build/**",
       "eslint.config.mjs",
     ],
-    files: ["**/*.ts", "**/*.tsx"],
+    files: ["src/**/*.{ts,tsx}"],
     extends: [
       eslint.configs.recommended,
       tseslint.configs.recommendedTypeChecked,
