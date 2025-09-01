@@ -1,9 +1,9 @@
 // @ts-check
-import eslint from "@eslint/js";
+import eslint from "@eslint/js"
 // @ts-ignore
-import { flatConfig } from "@next/eslint-plugin-next";
-import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
-import tseslint from "typescript-eslint";
+import { flatConfig } from "@next/eslint-plugin-next"
+import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended"
+import tseslint from "typescript-eslint"
 
 export default tseslint.config(
   // @ts-ignore
@@ -48,15 +48,12 @@ export default tseslint.config(
       "@typescript-eslint/switch-exhaustiveness-check": "warn",
       "@typescript-eslint/no-unnecessary-type-assertion": "warn",
       "@typescript-eslint/prefer-optional-chain": "warn",
-      "@typescript-eslint/no-unused-vars": [
-        "warn",
-        { argsIgnorePattern: "^_" },
-      ],
+      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
 
       // Code quality
       eqeqeq: ["error", "always"],
       "prefer-const": "error",
       "no-implicit-coercion": "error",
     },
-  }
-);
+  },
+)
