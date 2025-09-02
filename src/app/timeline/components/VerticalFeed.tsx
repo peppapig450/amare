@@ -1,6 +1,6 @@
 "use client"
 
-import { Disclosure } from "@headlessui/react"
+import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react"
 import { ChevronDownIcon, StarIcon } from "@heroicons/react/20/solid"
 import {
   CalendarIcon,
@@ -244,7 +244,10 @@ export function VerticalFeed({ loading = false }: VerticalFeedProps = {}) {
                         <Disclosure>
                           {({ open }) => (
                             <>
-                              <Disclosure.Button className="flex w-full items-start text-left">
+                              <DisclosureButton
+                                as="div"
+                                className="flex w-full items-start text-left"
+                              >
                                 <div className="flex-1">
                                   <p className="text-foreground text-sm font-medium">
                                     {item.title}
@@ -281,11 +284,11 @@ export function VerticalFeed({ loading = false }: VerticalFeedProps = {}) {
                                     open ? "rotate-180" : ""
                                   }`}
                                 />
-                              </Disclosure.Button>
+                              </DisclosureButton>
 
-                              <Disclosure.Panel className="mt-3 rounded-lg bg-gray-50 p-3 text-sm text-gray-600">
+                              <DisclosurePanel className="mt-3 rounded-lg bg-gray-50 p-3 text-sm text-gray-600">
                                 {item.details}
-                              </Disclosure.Panel>
+                              </DisclosurePanel>
                             </>
                           )}
                         </Disclosure>
