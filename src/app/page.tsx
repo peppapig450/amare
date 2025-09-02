@@ -19,7 +19,7 @@ export default function Home() {
 
           <p className="mx-auto mb-8 max-w-2xl text-lg text-gray-600 sm:text-xl dark:text-gray-300">
             Capture every precious moment, milestone, and memory with your partner. Build a timeline
-            of your relationship that you'll treasure forever.
+            of your relationship that you&apos;ll treasure forever.
           </p>
 
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
@@ -126,7 +126,7 @@ export default function Home() {
             Start tracking your love story today
           </h2>
           <p className="mb-8 text-lg text-gray-600 dark:text-gray-300">
-            Every moment matters. Don't let the precious memories fade away.
+            Every moment matters. Don&apos;t let the precious memories fade away.
           </p>
           <Link
             href="/dashboard"
