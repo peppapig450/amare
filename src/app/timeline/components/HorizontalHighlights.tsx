@@ -89,14 +89,6 @@ export function HorizontalHighlights({ loading = false }: HorizontalHighlightsPr
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(true)
 
-  if (loading) {
-    return <HighlightsSkeleton />
-  }
-
-  if (highlights.length === 0) {
-    return <EmptyHighlights />
-  }
-
   const checkScrollability = () => {
     if (scrollRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current
@@ -113,6 +105,14 @@ export function HorizontalHighlights({ loading = false }: HorizontalHighlightsPr
       return () => scrollElement.removeEventListener("scroll", checkScrollability)
     }
   }, [])
+
+  if (loading) {
+    return <HighlightsSkeleton />
+  }
+
+  if (highlights.length === 0) {
+    return <EmptyHighlights />
+  }
 
   const scrollLeft = () => {
     if (scrollRef.current) {
