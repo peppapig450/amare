@@ -1,55 +1,142 @@
-import Image from "next/image"
+import { CalendarIcon, CameraIcon, ChartBarIcon, HeartIcon } from "@heroicons/react/24/outline"
+import Link from "next/link"
 
 export default function Home() {
   return (
-    <div className="min-h-[calc(100vh-0px)] w-full px-8 pt-20 pb-20 font-sans sm:px-20">
-      <main className="flex flex-col items-center gap-8 sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
+    <div className="from-background dark:from-background min-h-screen bg-gradient-to-br to-gray-50 dark:to-gray-900">
+      {/* Hero Section */}
+      <section className="px-6 pt-20 pb-16">
+        <div className="container mx-auto max-w-6xl text-center">
+          <div className="mb-8 flex justify-center">
+            <div className="bg-love/10 flex h-16 w-16 items-center justify-center rounded-full">
+              <HeartIcon className="text-love h-8 w-8" />
+            </div>
+          </div>
 
-        <ol className="list-inside list-decimal text-center font-mono text-sm/6 sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="rounded bg-black/[.05] px-1 py-0.5 font-mono font-semibold dark:bg-white/[.06]">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">Save and see your changes instantly.</li>
-        </ol>
+          <h1 className="text-foreground mb-6 text-4xl font-bold sm:text-5xl md:text-6xl">
+            Your Love Story, <span className="text-primary">Beautifully Tracked</span>
+          </h1>
 
-        <div className="flex flex-col items-center gap-4 sm:flex-row">
-          <a
-            className="bg-foreground text-background flex h-10 items-center justify-center gap-2 rounded-full border border-solid border-transparent px-4 text-sm font-medium transition-colors hover:bg-[#383838] sm:h-12 sm:w-auto sm:px-5 sm:text-base dark:hover:bg-[#ccc]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="flex h-10 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-4 text-sm font-medium transition-colors hover:border-transparent hover:bg-[#f2f2f2] sm:h-12 sm:w-auto sm:px-5 sm:text-base md:w-[158px] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          <p className="mx-auto mb-8 max-w-2xl text-lg text-gray-600 sm:text-xl dark:text-gray-300">
+            Capture every precious moment, milestone, and memory with your partner. Build a timeline
+            of your relationship that you&apos;ll treasure forever.
+          </p>
+
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            <Link
+              href="/dashboard"
+              className="bg-primary hover:bg-primary-hover flex h-12 w-full items-center justify-center gap-2 rounded-lg px-8 text-sm font-medium text-white transition-colors sm:w-auto sm:text-base"
+            >
+              <ChartBarIcon className="h-5 w-5" />
+              View Dashboard
+            </Link>
+            <Link
+              href="/timeline"
+              className="text-foreground flex h-12 w-full items-center justify-center gap-2 rounded-lg border border-gray-300 px-8 text-sm font-medium transition-colors hover:bg-gray-50 sm:w-auto sm:text-base dark:border-gray-600 dark:hover:bg-gray-800"
+            >
+              <CalendarIcon className="h-5 w-5" />
+              Explore Timeline
+            </Link>
+          </div>
         </div>
-      </main>
+      </section>
+
+      {/* Features Section */}
+      <section className="px-6 py-16">
+        <div className="container mx-auto max-w-6xl">
+          <div className="mb-12 text-center">
+            <h2 className="text-foreground mb-4 text-3xl font-bold">
+              Everything you need to cherish your journey together
+            </h2>
+            <p className="mx-auto max-w-2xl text-gray-600 dark:text-gray-300">
+              From first dates to anniversaries, capture it all in one beautiful, organized space.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {/* Dashboard Feature */}
+            <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+              <div className="bg-primary/10 mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
+                <ChartBarIcon className="text-primary h-6 w-6" />
+              </div>
+              <h3 className="text-foreground mb-3 text-xl font-semibold">Relationship Dashboard</h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                Track days together, milestones reached, mood patterns, and activities. See your
+                love story in beautiful statistics.
+              </p>
+            </div>
+
+            {/* Timeline Feature */}
+            <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+              <div className="bg-milestone/10 mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
+                <CalendarIcon className="text-milestone h-6 w-6" />
+              </div>
+              <h3 className="text-foreground mb-3 text-xl font-semibold">Interactive Timeline</h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                Chronicle every special moment from first dates to anniversaries. Filter by tags,
+                mood, and memory type.
+              </p>
+            </div>
+
+            {/* Memory Feature */}
+            <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+              <div className="bg-photo/10 mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
+                <CameraIcon className="text-photo h-6 w-6" />
+              </div>
+              <h3 className="text-foreground mb-3 text-xl font-semibold">Rich Memories</h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                Add photos, detailed notes, mood ratings, and tags to create vivid memories you can
+                revisit anytime.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Preview Section */}
+      <section className="bg-gray-50 px-6 py-16 dark:bg-gray-900/50">
+        <div className="container mx-auto max-w-4xl text-center">
+          <h2 className="text-foreground mb-12 text-3xl font-bold">See your relationship grow</h2>
+
+          <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+            <div className="rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
+              <div className="text-love mb-2 text-3xl font-bold">847</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">Days Together</div>
+            </div>
+            <div className="rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
+              <div className="text-milestone mb-2 text-3xl font-bold">12</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">Milestones</div>
+            </div>
+            <div className="rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
+              <div className="text-note mb-2 text-3xl font-bold">8.5/10</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">Mood Rating</div>
+            </div>
+            <div className="rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
+              <div className="text-photo mb-2 text-3xl font-bold">34</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">Activities</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Call to Action */}
+      <section className="px-6 py-16">
+        <div className="container mx-auto max-w-4xl text-center">
+          <h2 className="text-foreground mb-4 text-3xl font-bold">
+            Start tracking your love story today
+          </h2>
+          <p className="mb-8 text-lg text-gray-600 dark:text-gray-300">
+            Every moment matters. Don&apos;t let the precious memories fade away.
+          </p>
+          <Link
+            href="/dashboard"
+            className="bg-primary hover:bg-primary-hover inline-flex h-12 items-center justify-center gap-2 rounded-lg px-8 text-base font-medium text-white transition-colors"
+          >
+            <HeartIcon className="h-5 w-5" />
+            Get Started
+          </Link>
+        </div>
+      </section>
     </div>
   )
 }
