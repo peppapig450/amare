@@ -140,18 +140,6 @@ export function VerticalFeed({ loading = false }: VerticalFeedProps = {}) {
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null)
 
-  if (loading) {
-    return (
-      <div className="flow-root">
-        <FeedSkeleton />
-      </div>
-    )
-  }
-
-  if (feedItems.length === 0) {
-    return <EmptyFeed />
-  }
-
   // Get all unique tags
   const allTags = useMemo(() => {
     const tags = new Set<string>()
@@ -166,6 +154,18 @@ export function VerticalFeed({ loading = false }: VerticalFeedProps = {}) {
     if (selectedTags.length === 0) return feedItems
     return feedItems.filter((item) => selectedTags.some((tag) => item.tags?.includes(tag)))
   }, [selectedTags])
+
+  if (loading) {
+    return (
+      <div className="flow-root">
+        <FeedSkeleton />
+      </div>
+    )
+  }
+
+  if (feedItems.length === 0) {
+    return <EmptyFeed />
+  }
 
   const toggleTag = (tag: string) => {
     setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]))
