@@ -243,7 +243,7 @@ export function VerticalFeed({ loading = false }: VerticalFeedProps = {}) {
                       {item.details ? (
                         <Disclosure>
                           {({ open }) => (
-                            <>
+                            <div>
                               <DisclosureButton
                                 as="div"
                                 className="flex w-full items-start text-left"
@@ -289,7 +289,7 @@ export function VerticalFeed({ loading = false }: VerticalFeedProps = {}) {
                               <DisclosurePanel className="mt-3 rounded-lg bg-gray-50 p-3 text-sm text-gray-600">
                                 {item.details}
                               </DisclosurePanel>
-                            </>
+                            </div>
                           )}
                         </Disclosure>
                       ) : (
