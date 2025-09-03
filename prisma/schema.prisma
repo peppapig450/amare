@@ -1,0 +1,179 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  email     String   @unique
+  name      String?
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationship connections
+  partnerOf Relationship[] @relation("Partner1")
+  partnerIn Relationship[] @relation("Partner2")
+
+  // Timeline entries
+  timelineEntries TimelineEntry[]
+
+  // Mood tracking
+  moodEntries MoodEntry[]
+
+  @@map("users")
+}
+
+model Relationship {
+  id        String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  status    RelationshipStatus @default(DATING)
+  startDate DateTime
+  endDate   DateTime?
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  // Partners
+  partner1Id String @db.Uuid()
+  partner2Id String @db.Uuid()
+  partner1   User   @relation("Partner1", fields: [partner1Id], references: [id], onDelete: Cascade)
+  partner2   User   @relation("Partner2", fields: [partner2Id], references: [id], onDelete: Cascade)
+
+  // Related data
+  milestones Milestone[]
+  timeline   TimelineEntry[]
+  settings   RelationshipSettings?
+
+  @@unique([partner1Id, partner2Id])
+  @@map("relationships")
+}
+
+model RelationshipSettings {
+  id             String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  relationshipId String  @unique @db.Uuid()
+  isPublic       Boolean @default(false)
+  allowMoodShare Boolean @default(true)
+  timezone       String  @default("UTC")
+
+  relationship Relationship @relation(fields: [relationshipId], references: [id], onDelete: Cascade)
+
+  @@map("relationship_settings")
+}
+
+model Milestone {
+  id          String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  title       String
+  description String?
+  date        DateTime
+  category    MilestoneCategory
+  isSpecial   Boolean           @default(false)
+  photos      String[]          @default([])
+  location    String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  relationshipId String       @db.Uuid()
+  relationship   Relationship @relation(fields: [relationshipId], references: [id], onDelete: Cascade)
+
+  @@map("milestones")
+}
+
+model TimelineEntry {
+  id        String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  title     String
+  content   String?
+  type      TimelineEntryType
+  date      DateTime
+  photos    String[]          @default([])
+  location  String?
+  tags      String[]          @default([])
+  isPrivate Boolean           @default(false)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  // Relationships
+  userId         String       @db.Uuid()
+  relationshipId String       @db.Uuid()
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  relationship   Relationship @relation(fields: [relationshipId], references: [id], onDelete: Cascade)
+
+  @@map("timeline_entries")
+}
+
+model MoodEntry {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  mood      MoodType
+  intensity Int // 1-10 scale
+  note      String?
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  userId String @db.Uuid()
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("mood_entries")
+}
+
+enum RelationshipStatus {
+  SINGLE
+  DATING
+  ENGAGED
+  MARRIED
+  COMPLICATED
+  TALKING
+  SITUATIONSHIP
+  SEPARATED
+  DIVORCED
+  JUST_FRIENDS
+}
+
+enum MilestoneCategory {
+  ANNIVERSARY
+  FIRST_DATE
+  FIRST_KISS
+  FIRST_I_LOVE_YOU
+  ENGAGEMENT
+  MARRIAGE
+  MOVING_IN
+  VACATION
+  ACHIEVEMENT
+  CHALLENGE
+  OTHER
+}
+
+enum TimelineEntryType {
+  MILESTONE
+  MEMORY
+  PHOTO
+  NOTE
+  ACHIEVEMENT
+  DATE
+  GIFT
+  CONVERSATION
+  OTHER
+}
+
+enum MoodType {
+  ECSTATIC
+  HAPPY
+  CONTENT
+  LONGING
+  NEUTRAL
+  ANXIOUS
+  SAD
+  FRUSTRATED
+  ANGRY
+  ROMANTIC
+  GRATEFUL
+}
