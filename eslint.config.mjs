@@ -19,6 +19,7 @@ export default tseslint.config(
       "postcss.config.*",
       "tailwind.config.*",
       "vite.config.*",
+      "src/generated/prisma/**",
     ],
   },
 
