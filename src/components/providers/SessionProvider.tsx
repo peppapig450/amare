@@ -4,7 +4,7 @@ import type { Session } from "next-auth"
 import { SessionProvider as NextAuthSessionProvider } from "next-auth/react"
 import type { ReactNode } from "react"
 
-type SessionProviderProps = {
+interface SessionProviderProps {
   /** Server-fetched session (from auth()). Keeps first paint in sync */
   session: Session | null
   children: ReactNode
