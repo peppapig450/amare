@@ -1,5 +1,6 @@
 "use client"
 
+import { AuthButton } from "@/components/auth/AuthButton"
 import { Disclosure } from "@headlessui/react"
 import {
   Bars3Icon,
@@ -76,7 +77,8 @@ export const NavBar = () => {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:block">
+            <div className="hidden items-center gap-6 md:flex">
+              <nav>
                 <ul className="flex items-center gap-1">
                   {navLinks.map((link) => (
                     <li key={link.href}>
@@ -85,6 +87,8 @@ export const NavBar = () => {
                   ))}
                 </ul>
               </nav>
+              <AuthButton />
+            </div>
 
             {/* Mobile Menu Button */}
             <Disclosure.Button className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 md:hidden dark:text-gray-300 dark:hover:bg-gray-800">
