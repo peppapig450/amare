@@ -77,14 +77,14 @@ export const NavBar = () => {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:block">
-              <ul className="flex items-center gap-1">
-                {navLinks.map((link) => (
-                  <li key={link.href}>
-                    <NavLinkItem {...link} />
-                  </li>
-                ))}
-              </ul>
-            </nav>
+                <ul className="flex items-center gap-1">
+                  {navLinks.map((link) => (
+                    <li key={link.href}>
+                      <NavLinkItem {...link} />
+                    </li>
+                  ))}
+                </ul>
+              </nav>
 
             {/* Mobile Menu Button */}
             <Disclosure.Button className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 md:hidden dark:text-gray-300 dark:hover:bg-gray-800">
