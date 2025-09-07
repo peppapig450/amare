@@ -60,7 +60,7 @@ export default tseslint.config(
       "@typescript-eslint/no-unnecessary-type-assertion": "warn",
       "@typescript-eslint/prefer-optional-chain": "warn",
       "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
-      eqeqeq: ["error", "always"],
+      eqeqeq: ["error", "always", { null: "ignore" }],
       "prefer-const": "error",
       "no-implicit-coercion": "error",
     },
