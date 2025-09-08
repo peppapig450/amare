@@ -14,6 +14,7 @@ export interface ApiFailure {
     message: string
     details?: unknown
   }
+  timestamp: string
 }
 
 export type ApiResponse<DataType> = ApiSuccess<DataType> | ApiFailure
@@ -37,7 +38,7 @@ export const Api = {
 
   failure(code: string, message: string, statusCode = 400, details?: unknown) {
     return NextResponse.json<ApiFailure>(
-      { ok: false, error: { code, message, details } },
+      { ok: false, error: { code, message, details }, timestamp: new Date().toISOString() },
       { status: statusCode },
     )
   },
@@ -46,10 +47,8 @@ export const Api = {
     if (error instanceof ApiError) {
       return Api.failure(error.code, error.message, error.status, error.details)
     }
-
     if (error instanceof ZodError) {
-      // ZodError-like
-      return Api.failure("BAD_REQUEST", "Validation failed", 400, error.issues)
+      return Api.unprocessable("Validation failed", error.issues)
     }
     return Api.failure("INTERNAL_SERVER_ERROR", "Internal server error", 500)
   },
@@ -70,8 +69,12 @@ export const Api = {
     return Api.failure("NOT_FOUND", message, 404)
   },
 
-  conflict(message = "Conflict") {
-    return Api.failure("CONFLICT", message, 409)
+  conflict(message = "Conflict", details?: unknown) {
+    return Api.failure("CONFLICT", message, 409, details)
+  },
+
+  badRequest(message = "Bad request", details?: unknown) {
+    return Api.failure("BAD_REQUEST", message, 400, details)
   },
 
   unprocessable(message = "Unprocessable entity", details?: unknown) {
@@ -83,7 +86,7 @@ export const Api = {
     // TODO: draw this out into its own interface
     pagination: { total: number; take?: number; skip?: number; cursor?: string; hasMore: boolean },
   ) {
-    return Api.success({ items, pagination })
+    return Api.success({ data: items, pagination })
   },
 
   successValidated<Schema extends ZodType>(data: unknown, schema: Schema, status = 200) {
