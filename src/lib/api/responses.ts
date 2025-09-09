@@ -10,7 +10,7 @@ export interface ApiSuccess<DataType> {
 export interface ApiFailure {
   ok: false
   error: {
-    code: string
+    code: ApiErrorCode
     message: string
     details?: unknown
   }
@@ -19,10 +19,20 @@ export interface ApiFailure {
 
 export type ApiResponse<DataType> = ApiSuccess<DataType> | ApiFailure
 
+export enum ApiErrorCode {
+  INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR",
+  UNAUTHORIZED = "UNAUTHORIZED",
+  NOT_FOUND = "NOT_FOUND",
+  CONFLICT = "CONFLICT",
+  BAD_REQUEST = "BAD_REQUEST",
+  UNPROCESSABLE_ENTITY = "UNPROCESSABLE_ENTITY",
+  VALIDATION_FAILED = "VALIDATION_FAILED",
+}
+
 export class ApiError extends Error {
   constructor(
     public status: number,
-    public code: string,
+    public code: ApiErrorCode,
     message: string,
     public details?: unknown,
   ) {
@@ -36,7 +46,7 @@ export const Api = {
     return NextResponse.json<ApiSuccess<DataType>>({ ok: true, data }, { status: statusCode })
   },
 
-  failure(code: string, message: string, statusCode = 400, details?: unknown) {
+  failure(code: ApiErrorCode, message: string, statusCode = 400, details?: unknown) {
     return NextResponse.json<ApiFailure>(
       { ok: false, error: { code, message, details }, timestamp: new Date().toISOString() },
       { status: statusCode },
@@ -48,9 +58,9 @@ export const Api = {
       return Api.failure(error.code, error.message, error.status, error.details)
     }
     if (error instanceof ZodError) {
-      return Api.unprocessable("Validation failed", error.issues)
+      return Api.unprocessable(ApiErrorCode.VALIDATION_FAILED, error.issues)
     }
-    return Api.failure("INTERNAL_SERVER_ERROR", "Internal server error", 500)
+    return Api.failure(ApiErrorCode.INTERNAL_SERVER_ERROR, "Internal server error", 500)
   },
 
   created<DataType>(data: DataType) {
@@ -62,23 +72,23 @@ export const Api = {
   },
 
   unauthorized(message = "Unauthorized") {
-    return Api.failure("UNAUTHORIZED", message, 401)
+    return Api.failure(ApiErrorCode.UNAUTHORIZED, message, 401)
   },
 
   notFound(message = "Not found") {
-    return Api.failure("NOT_FOUND", message, 404)
+    return Api.failure(ApiErrorCode.NOT_FOUND, message, 404)
   },
 
   conflict(message = "Conflict", details?: unknown) {
-    return Api.failure("CONFLICT", message, 409, details)
+    return Api.failure(ApiErrorCode.CONFLICT, message, 409, details)
   },
 
   badRequest(message = "Bad request", details?: unknown) {
-    return Api.failure("BAD_REQUEST", message, 400, details)
+    return Api.failure(ApiErrorCode.BAD_REQUEST, message, 400, details)
   },
 
   unprocessable(message = "Unprocessable entity", details?: unknown) {
-    return Api.failure("UNPROCESSABLE_ENTITY", message, 422, details)
+    return Api.failure(ApiErrorCode.UNPROCESSABLE_ENTITY, message, 422, details)
   },
 
   paginated<DataType>(
