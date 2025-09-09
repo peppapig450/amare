@@ -1,12 +1,12 @@
 import { auth } from "@/auth"
 import type { Prisma } from "@/generated/prisma"
 import { prisma } from "@/lib/prisma"
-import { ApiError } from "./responses"
+import { ApiError, ApiErrorCode } from "./responses"
 
 export const requireUserId = async () => {
   const session = await auth()
   const userId = session?.user?.id
-  if (!userId) throw new ApiError(401, "UNAUTHORIZED", "Unauthorized")
+  if (!userId) throw new ApiError(401, ApiErrorCode.UNAUTHORIZED, "Unauthorized")
   return userId
 }
 
@@ -27,7 +27,7 @@ export const ensure = {
       where: { id: relationshipId, ...where.relationshipAccess(userId) },
       select: { id: true },
     })
-    if (!relationship) throw new ApiError(404, "NOT_FOUND", "Relationship not found")
+    if (!relationship) throw new ApiError(404, ApiErrorCode.NOT_FOUND, "Relationship not found")
     return relationship
   },
 
@@ -36,7 +36,7 @@ export const ensure = {
       where: { id: milestoneId, relationship: where.relationshipAccess(userId) },
       select: { id: true, relationshipId: true },
     })
-    if (!milestone) throw new ApiError(404, "NOT_FOUND", "Milestone not found")
+    if (!milestone) throw new ApiError(404, ApiErrorCode.NOT_FOUND, "Milestone not found")
     return milestone
   },
 
@@ -45,7 +45,7 @@ export const ensure = {
       where: { id: entryId, userId },
       select: { id: true },
     })
-    if (!moodEntry) throw new ApiError(404, "NOT_FOUND", "Mood entry not found")
+    if (!moodEntry) throw new ApiError(404, ApiErrorCode.NOT_FOUND, "Mood entry not found")
     return moodEntry
   },
 
@@ -67,7 +67,7 @@ export const ensure = {
       const message = requireOwnership
         ? "Timeline entry not found or you don't have permission to edit it"
         : "Timeline entry not found"
-      throw new ApiError(404, "NOT_FOUND", message)
+      throw new ApiError(404, ApiErrorCode.NOT_FOUND, message)
     }
     return timelineEntry
   },
