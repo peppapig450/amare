@@ -20,6 +20,11 @@ export const withErrorHandling = <HandlerArgs extends unknown[]>(
         )
       }
 
+      // Handle invalid JSON body (TODO: zod probably already covers this)
+      if (caughtError instanceof SyntaxError && String(caughtError.message).includes("JSON")) {
+        return Api.badRequest("Invalid JSON body")
+      }
+
       // Handle known Prisma error
       if (caughtError instanceof Prisma.PrismaClientKnownRequestError) {
         if (caughtError.code === "P2002") {
@@ -31,14 +36,10 @@ export const withErrorHandling = <HandlerArgs extends unknown[]>(
         if (caughtError.code === "P2025") {
           return Api.notFound("Record not found")
         }
-
-        // Handle invalid JSON body (TODO: zod probably already covers this)
-        if (caughtError instanceof SyntaxError && String(caughtError.message).includes("JSON")) {
-          return Api.badRequest("Invalid JSON body")
-        }
-
-        return Api.failure(ApiErrorCode.INTERNAL_SERVER_ERROR, "An unexpected error occurred", 500)
       }
+
+      // Fallback for anything else
+      return Api.failure(ApiErrorCode.INTERNAL_SERVER_ERROR, "An unexpected error occurred", 500)
     }
   }
 }
