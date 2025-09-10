@@ -41,7 +41,7 @@ export const validateRequestBody = async <RequestBody>(
     if (error instanceof ApiError) {
       throw error
     }
-    handleValidationError(error, "query parameters")
+    handleValidationError(error, "request body")
     return undefined as never
   }
 }
