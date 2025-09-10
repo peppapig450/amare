@@ -77,7 +77,7 @@ export const PathParamSchemas = {
     id: z.uuid("Invalid ID format"),
   }),
 
-  relationshipsId: z.object({
+  relationshipId: z.object({
     relationshipId: z.uuid("Invalid relationship ID format"),
   }),
 
