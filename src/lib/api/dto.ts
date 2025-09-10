@@ -2,7 +2,7 @@ import {
   MilestoneCategorySchema,
   MoodTypeSchema,
   RelationshipStatusSchema,
-  TimelineEntrySchema,
+  TimelineEntryTypeSchema,
 } from "@/generated/zod/schemas"
 import { z } from "zod"
 
@@ -95,7 +95,7 @@ export const MilestoneListSchema = PaginationSchema.extend({
 export const TimelineEntryCreateSchema = z.object({
   title: z.string().trim().min(1).max(200),
   content: z.string().trim().max(2000).optional(),
-  type: TimelineEntrySchema,
+  type: TimelineEntryTypeSchema,
   date: z.coerce.date(),
   photos: z.array(z.url()).max(20).default([]),
   location: z.string().trim().max(200).optional(),
@@ -107,7 +107,7 @@ export const TimelineEntryCreateSchema = z.object({
 export const TimelineEntryUpdateSchema = z.object({
   title: z.string().trim().min(1).max(200).optional(),
   content: z.string().trim().max(2000).optional(),
-  type: TimelineEntrySchema.optional(),
+  type: TimelineEntryTypeSchema.optional(),
   date: z.coerce.date().optional(),
   photos: z.array(z.url()).max(20).optional(),
   location: z.string().trim().max(200).optional(),
@@ -117,7 +117,7 @@ export const TimelineEntryUpdateSchema = z.object({
 
 export const TimelineEntryListSchema = PaginationSchema.extend({
   relationshipId: z.uuid().optional(),
-  type: TimelineEntrySchema.optional(),
+  type: TimelineEntryTypeSchema.optional(),
   includePrivate: z.coerce.boolean().default(false),
   tags: z.array(z.string()).optional(),
   ...DateRangeSchema.shape,
