@@ -12,7 +12,7 @@ export {
   MilestoneSchema,
   MoodEntrySchema,
   RelationshipSchema,
-  TimelineEntrySchema,
+  TimelineEntryTypeSchema,
   UserSchema,
 } from "@/generated/zod/schemas"
 
