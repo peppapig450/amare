@@ -1,0 +1,93 @@
+import {
+  Api,
+  ensure,
+  PathParamSchemas,
+  requireUserId,
+  TimelineEntryUpdateSchema,
+  validatePathParams,
+  withErrorHandling,
+} from "@/lib/api"
+import { prisma } from "@/lib/prisma"
+import type { NextRequest } from "next/server"
+
+interface RouteContext {
+  params: Promise<{ id: string }>
+}
+
+export const GET = withErrorHandling(async (request: NextRequest, context: RouteContext) => {
+  const userId = await requireUserId()
+  const { id: entryId } = validatePathParams(await context.params, PathParamSchemas.id)
+
+  await ensure.timelineEntry(entryId, userId)
+
+  const entry = await prisma.timelineEntry.findFirst({
+    where: {
+      id: entryId,
+      relationship: {
+        OR: [{ partner1Id: userId }, { partner2Id: userId }],
+      },
+      OR: [{ isPrivate: false }, { isPrivate: true, userId }],
+    },
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      type: true,
+      date: true,
+      photos: true,
+      location: true,
+      tags: true,
+      isPrivate: true,
+      updatedAt: true,
+      user: {
+        select: { id: true, name: true, image: true },
+      },
+    },
+  })
+
+  return Api.success(entry)
+})
+
+export const PATCH = withErrorHandling(async (request: NextRequest, context: RouteContext) => {
+  const userId = await requireUserId()
+  const { id: entryId } = validatePathParams(await context.params, PathParamSchemas.id)
+  const data = (await request.json()) as unknown
+  const validatedData = TimelineEntryUpdateSchema.parse(data)
+
+  await ensure.timelineEntry(entryId, userId, true)
+
+  const updatedEntry = await prisma.timelineEntry.update({
+    where: { id: entryId },
+    data: validatedData,
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      type: true,
+      date: true,
+      photos: true,
+      location: true,
+      tags: true,
+      isPrivate: true,
+      updatedAt: true,
+      user: {
+        select: { id: true, name: true, image: true },
+      },
+    },
+  })
+
+  return Api.success(updatedEntry)
+})
+
+export const DELETE = withErrorHandling(async (request: NextRequest, context: RouteContext) => {
+  const userId = await requireUserId()
+  const { id: entryId } = validatePathParams(await context.params, PathParamSchemas.id)
+
+  await ensure.timelineEntry(entryId, userId, true)
+
+  await prisma.timelineEntry.delete({
+    where: { id: entryId },
+  })
+
+  return Api.noContent()
+})
