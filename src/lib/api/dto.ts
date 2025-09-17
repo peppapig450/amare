@@ -119,7 +119,34 @@ export const TimelineEntryListSchema = PaginationSchema.extend({
   relationshipId: z.uuid().optional(),
   type: TimelineEntryTypeSchema.optional(),
   includePrivate: z.coerce.boolean().default(false),
-  tags: z.array(z.string()).optional(),
+  tags: z
+    .preprocess(
+      (value) => {
+        if (value == null) {
+          return undefined
+        }
+
+        const normalize = (input: string) =>
+          input
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter((tag) => tag.length > 0)
+
+        if (typeof value === "string") {
+          const tags = normalize(value)
+          return tags.length > 0 ? tags : undefined
+        }
+
+        if (Array.isArray(value)) {
+          const tags = value.flatMap((item) => (typeof item === "string" ? normalize(item) : []))
+          return tags.length > 0 ? tags : undefined
+        }
+
+        return value
+      },
+      z.array(z.string().trim().min(1).max(50)).max(10),
+    )
+    .optional(),
   ...DateRangeSchema.shape,
 })
 
@@ -162,9 +189,9 @@ export const PaginatedResponseSchema = <Schema extends z.ZodType>(itemSchema: Sc
   z.object({
     data: z.array(itemSchema),
     pagination: z.object({
-      total: z.number().int().min(0),
-      take: z.number().int().positive().optional(),
-      skip: z.number().int().min(0).optional(),
+      total: z.coerce.number().int().min(0),
+      take: z.coerce.number().int().positive().optional(),
+      skip: z.coerce.number().int().min(0).optional(),
       cursor: z.uuid().optional(),
       hasMore: z.boolean(),
     }),
