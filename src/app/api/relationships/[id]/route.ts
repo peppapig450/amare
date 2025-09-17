@@ -53,7 +53,7 @@ export const GET = withErrorHandling(async (request: NextRequest, context: Route
           },
         },
       }),
-      ...(query.includeSettings && {
+      ...(query.includeMilestones && {
         milestones: {
           select: {
             id: true,
