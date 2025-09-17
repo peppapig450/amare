@@ -89,7 +89,7 @@ export const POST = withErrorHandling(async (request: NextRequest, context: Rout
     )
   }
 
-  const milestone = prisma.milestone.create({
+  const milestone = await prisma.milestone.create({
     data: validatedData,
     select: {
       id: true,
