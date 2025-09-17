@@ -1,0 +1,76 @@
+import {
+  Api,
+  ensure,
+  MoodEntryUpdateSchema,
+  PathParamSchemas,
+  requireUserId,
+  validatePathParams,
+  withErrorHandling,
+} from "@/lib/api"
+import { prisma } from "@/lib/prisma"
+import type { NextRequest } from "next/server"
+
+interface RouteContext {
+  params: Promise<{ id: string }>
+}
+
+export const GET = withErrorHandling(async (request: NextRequest, context: RouteContext) => {
+  const userId = await requireUserId()
+  const { id: entryId } = validatePathParams(await context.params, PathParamSchemas.id)
+
+  await ensure.moodEntry(entryId, userId)
+
+  const entry = await prisma.moodEntry.findUnique({
+    where: { id: entryId },
+    select: {
+      id: true,
+      mood: true,
+      intensity: true,
+      note: true,
+      date: true,
+      createdAt: true,
+      user: {
+        select: { id: true, name: true, image: true },
+      },
+    },
+  })
+
+  return Api.success(entry)
+})
+
+export const PATCH = withErrorHandling(async (request: NextRequest, context: RouteContext) => {
+  const userId = await requireUserId()
+  const { id: entryId } = validatePathParams(await context.params, PathParamSchemas.id)
+  const data = (await request.json()) as unknown
+  const validatedData = MoodEntryUpdateSchema.parse(data)
+
+  await ensure.moodEntry(entryId, userId)
+
+  const updatedEntry = await prisma.moodEntry.update({
+    where: { id: entryId },
+    data: validatedData,
+    select: {
+      id: true,
+      mood: true,
+      intensity: true,
+      note: true,
+      date: true,
+      createdAt: true,
+    },
+  })
+
+  return Api.success(updatedEntry)
+})
+
+export const DELETE = withErrorHandling(async (request: NextRequest, context: RouteContext) => {
+  const userId = await requireUserId()
+  const { id: entryId } = validatePathParams(await context.params, PathParamSchemas.id)
+
+  await ensure.moodEntry(entryId, userId)
+
+  await prisma.moodEntry.delete({
+    where: { id: entryId },
+  })
+
+  return Api.noContent()
+})
