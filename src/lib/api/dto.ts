@@ -9,8 +9,8 @@ import { z } from "zod"
 // Base DTOs for common patterns
 
 export const PaginationSchema = z.object({
-  take: z.number().int().positive().max(100).optional(),
-  skip: z.number().int().min(0).optional(),
+  take: z.coerce.number().int().positive().max(100).optional(),
+  skip: z.coerce.number().int().min(0).optional(),
   cursor: z.uuid().optional(),
 })
 
@@ -126,22 +126,22 @@ export const TimelineEntryListSchema = PaginationSchema.extend({
 // Mood entry DtOs
 export const MoodEntryCreateSchema = z.object({
   mood: MoodTypeSchema,
-  intensity: z.number().int().min(1).max(10),
+  intensity: z.coerce.number().int().min(1).max(10),
   note: z.string().trim().max(500).optional(),
   date: z.coerce.date().optional(),
 })
 
 export const MoodEntryUpdateSchema = z.object({
   mood: MoodTypeSchema.optional(),
-  intensity: z.number().int().min(1).max(10).optional(),
+  intensity: z.coerce.number().int().min(1).max(10).optional(),
   note: z.string().trim().max(500).optional(),
   date: z.coerce.date().optional(),
 })
 
 export const MoodEntryListSchema = z.object({
   mood: MoodTypeSchema.optional(),
-  minIntensity: z.number().int().min(1).max(10).optional(),
-  maxIntensity: z.number().int().min(1).max(10).optional(),
+  minIntensity: z.coerce.number().int().min(1).max(10).optional(),
+  maxIntensity: z.coerce.number().int().min(1).max(10).optional(),
   ...DateRangeSchema.shape,
 })
 
