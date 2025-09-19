@@ -4,6 +4,7 @@ import {
   MoodEntryListSchema,
   requireUserId,
   validateQueryParams,
+  validateRequestBody,
   withErrorHandling,
 } from "@/lib/api"
 import { prisma } from "@/lib/prisma"
@@ -39,8 +40,7 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
 
 export const POST = withErrorHandling(async (request: NextRequest) => {
   const userId = await requireUserId()
-  const data = (await request.json()) as unknown
-  const validatedData = MoodEntryCreateSchema.parse(data)
+  const validatedData = await validateRequestBody(request, MoodEntryCreateSchema)
 
   const entry = await prisma.moodEntry.create({
     data: {
