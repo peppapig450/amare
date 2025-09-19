@@ -6,6 +6,7 @@ import {
   requireUserId,
   validatePathParams,
   validateRequestBody,
+  where,
   withErrorHandling,
 } from "@/lib/api"
 import { prisma } from "@/lib/prisma"
@@ -24,9 +25,7 @@ export const GET = withErrorHandling(async (request: NextRequest, context: Route
   const milestone = await prisma.milestone.findFirst({
     where: {
       id: milestoneId,
-      relationship: {
-        OR: [{ partner1Id: userId }, { partner2Id: userId }],
-      },
+      relationship: where.relationshipAccess(userId),
     },
     select: {
       id: true,
