@@ -6,6 +6,7 @@ import {
   TimelineEntryUpdateSchema,
   validatePathParams,
   validateRequestBody,
+  where,
   withErrorHandling,
 } from "@/lib/api"
 import { prisma } from "@/lib/prisma"
@@ -24,10 +25,8 @@ export const GET = withErrorHandling(async (request: NextRequest, context: Route
   const entry = await prisma.timelineEntry.findFirst({
     where: {
       id: entryId,
-      relationship: {
-        OR: [{ partner1Id: userId }, { partner2Id: userId }],
-      },
-      OR: [{ isPrivate: false }, { isPrivate: true, userId }],
+      relationship: where.relationshipAccess(userId),
+      ...where.privacyForUser(userId, false),
     },
     select: {
       id: true,
