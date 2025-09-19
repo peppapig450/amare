@@ -6,6 +6,7 @@ import {
   RelationshipSettingsUpdateSchema,
   requireUserId,
   validatePathParams,
+  validateRequestBody,
   withErrorHandling,
 } from "@/lib/api"
 import { prisma } from "@/lib/prisma"
@@ -69,8 +70,7 @@ export const GET = withErrorHandling(async (request: NextRequest, context: Route
 export const PATCH = withErrorHandling(async (request: NextRequest, context: RouteContext) => {
   const userId = await requireUserId()
   const { id: relationshipId } = validatePathParams(await context.params, PathParamSchemas.id)
-  const data = (await request.json()) as unknown
-  const validatedData = RelationshipSettingsUpdateSchema.parse(data)
+  const validatedData = await validateRequestBody(request, RelationshipSettingsUpdateSchema)
 
   await relationshipAccessValidation({ id: relationshipId }, userId)
 

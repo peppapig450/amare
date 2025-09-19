@@ -5,6 +5,7 @@ import {
   PathParamSchemas,
   requireUserId,
   validatePathParams,
+  validateRequestBody,
   withErrorHandling,
 } from "@/lib/api"
 import { prisma } from "@/lib/prisma"
@@ -54,8 +55,7 @@ export const GET = withErrorHandling(async (request: NextRequest, context: Route
 export const PATCH = withErrorHandling(async (request: NextRequest, context: RouteContext) => {
   const userId = await requireUserId()
   const { id: milestoneId } = validatePathParams(await context.params, PathParamSchemas.id)
-  const data = (await request.json()) as unknown
-  const validatedData = MilestoneUpdateSchema.parse(data)
+  const validatedData = await validateRequestBody(request, MilestoneUpdateSchema)
 
   await ensure.milestone(milestoneId, userId)
 
