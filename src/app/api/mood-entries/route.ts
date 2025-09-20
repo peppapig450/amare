@@ -2,6 +2,7 @@ import {
   Api,
   MoodEntryCreateSchema,
   MoodEntryListSchema,
+  moodEntrySelect,
   requireUserId,
   validateQueryParams,
   validateRequestBody,
@@ -24,14 +25,7 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
       ...(query.startDate && { date: { gte: query.startDate } }),
       ...(query.endDate && { date: { lte: query.endDate } }),
     },
-    select: {
-      id: true,
-      mood: true,
-      intensity: true,
-      note: true,
-      date: true,
-      createdAt: true,
-    },
+    select: moodEntrySelect,
     orderBy: { date: "desc" },
   })
 
@@ -48,14 +42,7 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
       userId,
       date: validatedData.date ?? new Date(),
     },
-    select: {
-      id: true,
-      mood: true,
-      intensity: true,
-      note: true,
-      date: true,
-      createdAt: true,
-    },
+    select: moodEntrySelect,
   })
 
   return Api.created(entry)

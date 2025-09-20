@@ -1,7 +1,9 @@
 import {
   Api,
   ensure,
+  moodEntrySelect,
   MoodEntryUpdateSchema,
+  moodEntryWithUserSelect,
   PathParamSchemas,
   requireUserId,
   validatePathParams,
@@ -23,17 +25,7 @@ export const GET = withErrorHandling(async (request: NextRequest, context: Route
 
   const entry = await prisma.moodEntry.findUnique({
     where: { id: entryId },
-    select: {
-      id: true,
-      mood: true,
-      intensity: true,
-      note: true,
-      date: true,
-      createdAt: true,
-      user: {
-        select: { id: true, name: true, image: true },
-      },
-    },
+    select: moodEntryWithUserSelect,
   })
 
   return Api.success(entry)
@@ -49,14 +41,7 @@ export const PATCH = withErrorHandling(async (request: NextRequest, context: Rou
   const updatedEntry = await prisma.moodEntry.update({
     where: { id: entryId },
     data: validatedData,
-    select: {
-      id: true,
-      mood: true,
-      intensity: true,
-      note: true,
-      date: true,
-      createdAt: true,
-    },
+    select: moodEntrySelect,
   })
 
   return Api.success(updatedEntry)
