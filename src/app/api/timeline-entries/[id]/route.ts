@@ -4,6 +4,7 @@ import {
   PathParamSchemas,
   requireUserId,
   TimelineEntryUpdateSchema,
+  timelineEntryWithUserSelect,
   validatePathParams,
   validateRequestBody,
   where,
@@ -28,21 +29,7 @@ export const GET = withErrorHandling(async (request: NextRequest, context: Route
       relationship: where.relationshipAccess(userId),
       ...where.privacyForUser(userId, false),
     },
-    select: {
-      id: true,
-      title: true,
-      content: true,
-      type: true,
-      date: true,
-      photos: true,
-      location: true,
-      tags: true,
-      isPrivate: true,
-      updatedAt: true,
-      user: {
-        select: { id: true, name: true, image: true },
-      },
-    },
+    select: timelineEntryWithUserSelect,
   })
 
   return Api.success(entry)
@@ -58,21 +45,7 @@ export const PATCH = withErrorHandling(async (request: NextRequest, context: Rou
   const updatedEntry = await prisma.timelineEntry.update({
     where: { id: entryId },
     data: validatedData,
-    select: {
-      id: true,
-      title: true,
-      content: true,
-      type: true,
-      date: true,
-      photos: true,
-      location: true,
-      tags: true,
-      isPrivate: true,
-      updatedAt: true,
-      user: {
-        select: { id: true, name: true, image: true },
-      },
-    },
+    select: timelineEntryWithUserSelect,
   })
 
   return Api.success(updatedEntry)
