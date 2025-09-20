@@ -1,7 +1,8 @@
 import type { NextRequest } from "next/server"
-import type { ZodError, ZodType } from "zod"
+import type { ZodType } from "zod"
 import { z } from "zod"
 import { ApiError, ApiErrorCode } from "./responses"
+import { formatZodError } from "./zodUtils"
 
 const handleValidationError = (error: unknown, context: string): never => {
   if (error instanceof z.ZodError) {
@@ -10,15 +11,7 @@ const handleValidationError = (error: unknown, context: string): never => {
   throw new ApiError(400, ApiErrorCode.BAD_REQUEST, `Invalid ${context}`)
 }
 
-export const formatZodError = (error: ZodError): string => {
-  const issues = error.issues.map((issue) => {
-    const path = issue.path.join(".")
-    const message = issue.message
-    return path ? `${path}: ${message}` : message
-  })
-
-  return `Validation failed: ${issues.join(", ")}`
-}
+export { formatZodError }
 
 export const validateRequestBody = async <RequestBody>(
   request: NextRequest,
