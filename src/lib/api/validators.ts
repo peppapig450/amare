@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server"
 import type { ZodType } from "zod"
 import { z } from "zod"
+import { readJson } from "./parsers"
 import { ApiError, ApiErrorCode } from "./responses"
 import { formatZodError } from "./zodUtils"
 
@@ -18,18 +19,7 @@ export const validateRequestBody = async <RequestBody>(
   schema: ZodType<RequestBody>,
 ): Promise<RequestBody> => {
   try {
-    const rawText = await request.text()
-    let parsedBody: unknown
-
-    try {
-      parsedBody = rawText ? JSON.parse(rawText) : {}
-    } catch {
-      throw new ApiError(400, ApiErrorCode.BAD_REQUEST, "Request body must be valid JSON", {
-        reason: "INVALID_JSON",
-      })
-    }
-
-    return schema.parse(parsedBody)
+    return await readJson(request, schema)
   } catch (error) {
     if (error instanceof ApiError) {
       throw error
