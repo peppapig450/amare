@@ -20,6 +20,8 @@ on:
       - ".eslintrc*"
       - ".prettierrc*"
 
+  workflow_dispatch:
+
 permissions:
   contents: read
 
