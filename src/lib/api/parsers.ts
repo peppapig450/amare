@@ -20,7 +20,7 @@ export const readJson = async <Schema>(
   }
 
   try {
-  return schema.parse(parsedBody)
+    return schema.parse(parsedBody)
   } catch (error) {
     if (error instanceof z.ZodError) {
       throw new ApiError(400, ApiErrorCode.VALIDATION_FAILED, formatZodError(error))
@@ -78,18 +78,53 @@ export const queryParsers = {
     const parsedResult = schema.safeParse(rawValue)
     return parsedResult.success ? parsedResult.data : undefined
   },
+}
 
-  paginate: (searchParams: URLSearchParams) => {
-    // `take`: how many items to fetch (similar to SQL `LIMIT`)
-    const take =
-      queryParsers.integer(searchParams, "take") ?? queryParsers.integer(searchParams, "limit")
+interface PaginationOptions {
+  defaultTake?: number
+  maxTake?: number
+}
 
-    // `skip`: how many items to skip before starting (similar to SQL `OFFSET`)
-    const skip = queryParsers.integer(searchParams, "skip")
+const DEFAULT_TAKE = 20
+const DEFAULT_SKIP = 0
+const DEFAULT_MAX_TAKE = 100
 
-    // `cursor`: a pointer to cursor-based pagination (e.g., "start after this ID")
-    const cursor = searchParams.get("cursor") ?? undefined
+const parsePositiveInt = (value: string | null | undefined) => {
+  if (value == null) {
+    return undefined
+  }
 
-    return { take, skip, cursor }
-  },
+  const parsed = Number.parseInt(value, 10)
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined
+}
+
+const parseNonNegativeInt = (value: string | null | undefined) => {
+  if (value == null) {
+    return undefined
+  }
+
+  const parsed = Number.parseInt(value, 10)
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : undefined
+}
+
+export const parsePaginationParams = (
+  searchParams: URLSearchParams,
+  options: PaginationOptions = {},
+) => {
+  const { defaultTake = DEFAULT_TAKE, maxTake = DEFAULT_MAX_TAKE } = options
+
+  const takeParam = searchParams.get("take") ?? searchParams.get("limit")
+  const skipParam = searchParams.get("skip")
+  const cursorParam = searchParams.get("cursor") ?? undefined
+
+  // `take`: how many items to fetch (similar to SQL `LIMIT`)
+  const take = Math.min(parsePositiveInt(takeParam) ?? defaultTake, maxTake)
+
+  // `skip`: how many items to skip before starting (similar to SQL `OFFSET`)
+  const skip = parseNonNegativeInt(skipParam) ?? DEFAULT_SKIP
+
+  // `cursor`: a pointer to cursor-based pagination (e.g., "start after this ID")
+  const cursor = cursorParam && z.uuid().safeParse(cursorParam).success ? cursorParam : undefined
+
+  return { take, skip, cursor }
 }
