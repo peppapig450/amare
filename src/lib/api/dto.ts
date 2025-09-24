@@ -4,15 +4,22 @@ import {
   RelationshipStatusSchema,
   TimelineEntryTypeSchema,
 } from "@/generated/zod/schemas"
+import type { ZodRawShape } from "zod"
 import { z } from "zod"
+import { normalizePaginationParams } from "./parsers"
 
 // Base DTOs for common patterns
 
-export const PaginationSchema = z.object({
+const PaginationInputSchema = z.object({
   take: z.coerce.number().int().positive().max(100).optional(),
   skip: z.coerce.number().int().min(0).optional(),
   cursor: z.uuid().optional(),
 })
+
+const createPaginationSchema = <Shape extends ZodRawShape>(shape: Shape) =>
+  PaginationInputSchema.extend(shape).transform((value) => normalizePaginationParams(value))
+
+export const PaginationSchema = createPaginationSchema({})
 
 export const DateRangeSchema = z.object({
   startDate: z.coerce.date().optional(),
@@ -44,7 +51,7 @@ export const RelationshipUpdateSchema = z.object({
   endDate: z.coerce.date().nullable().optional(),
 })
 
-export const RelationshipListSchema = PaginationSchema.extend({
+export const RelationshipListSchema = createPaginationSchema({
   status: RelationshipStatusSchema.optional(),
   includeEnded: z.coerce.boolean().default(false),
 })
@@ -84,7 +91,7 @@ export const MilestoneUpdateSchema = z.object({
   location: z.string().trim().max(200).optional(),
 })
 
-export const MilestoneListSchema = PaginationSchema.extend({
+export const MilestoneListSchema = createPaginationSchema({
   relationshipId: z.uuid().optional(),
   category: MilestoneCategorySchema.optional(),
   isSpecial: z.coerce.boolean().optional(),
@@ -115,7 +122,7 @@ export const TimelineEntryUpdateSchema = z.object({
   isPrivate: z.boolean().optional(),
 })
 
-export const TimelineEntryListSchema = PaginationSchema.extend({
+export const TimelineEntryListSchema = createPaginationSchema({
   relationshipId: z.uuid().optional(),
   type: TimelineEntryTypeSchema.optional(),
   includePrivate: z.coerce.boolean().default(false),

@@ -58,9 +58,9 @@ export const GET = withErrorHandling(async (request: NextRequest, context: Route
         },
       },
       orderBy: { date: "desc" },
-      take: query.take,
-      skip: query.skip,
-      ...(query.cursor && { cursor: { id: query.cursor } }),
+      take: query.prisma.take,
+      skip: query.prisma.skip,
+      ...(query.prisma.cursor && { cursor: query.prisma.cursor }),
     }),
     prisma.timelineEntry.count({
       where: {
@@ -82,7 +82,7 @@ export const GET = withErrorHandling(async (request: NextRequest, context: Route
     take: query.take,
     skip: query.skip,
     cursor: query.cursor,
-    hasMore: (query.skip ?? 0) + (query.take ?? 20) < total,
+    hasMore: query.skip + items.length < total,
   })
 })
 

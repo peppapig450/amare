@@ -34,23 +34,19 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
     ...(query.includeEnded ? {} : { endDate: null }),
   }
 
-  const take = query.take
-  const baseSkip = query.skip ?? 0
-  const skip = baseSkip + (query.cursor ? 1 : 0)
-
   const [relationships, total] = await prisma.$transaction([
     prisma.relationship.findMany({
       where: whereClause,
       select: relationshipSummarySelect,
       orderBy: { createdAt: "desc" },
-      take,
-      skip,
-      ...(query.cursor && { cursor: { id: query.cursor } }),
+      take: query.prisma.take,
+      skip: query.prisma.skip,
+      ...(query.prisma.cursor && { cursor: query.prisma.cursor }),
     }),
     prisma.relationship.count({ where: whereClause }),
   ])
 
-  const hasMore = baseSkip + relationships.length < total
+  const hasMore = query.skip + relationships.length < total
 
   return Api.paginated(relationships, {
     total,

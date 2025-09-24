@@ -128,3 +128,54 @@ export const parsePaginationParams = (
 
   return { take, skip, cursor }
 }
+
+interface PaginationLike {
+  take?: number | null
+  skip?: number | null
+  cursor?: string | null
+}
+
+export interface NormalizedPaginationParams {
+  take: number
+  skip: number
+  cursor?: string
+  prisma: {
+    take: number
+    skip: number
+    cursor?: { id: string }
+  }
+}
+
+export const normalizePaginationParams = <Input extends PaginationLike>(
+  pagination: Input,
+  options: PaginationOptions = {},
+): Input & NormalizedPaginationParams => {
+  const searchParams = new URLSearchParams()
+
+  if (pagination.take != null) {
+    searchParams.set("take", pagination.take.toString())
+  }
+
+  if (pagination.skip != null) {
+    searchParams.set("skip", pagination.skip.toString())
+  }
+
+  if (pagination.cursor) {
+    searchParams.set("cursor", pagination.cursor)
+  }
+
+  const parsed = parsePaginationParams(searchParams, options)
+  const prismaSkip = parsed.skip + (parsed.cursor ? 1 : 0)
+
+  return {
+    ...pagination,
+    take: parsed.take,
+    skip: parsed.skip,
+    cursor: parsed.cursor,
+    prisma: {
+      take: parsed.take,
+      skip: prismaSkip,
+      ...(parsed.cursor ? { cursor: { id: parsed.cursor } } : {}),
+    },
+  }
+}
