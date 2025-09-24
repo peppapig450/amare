@@ -63,6 +63,7 @@ export default tseslint.config(
       eqeqeq: ["error", "always", { null: "ignore" }],
       "prefer-const": "error",
       "no-implicit-coercion": "error",
+      "newline-per-chained-call": ["error", { ignoreChainWithDepth: 2 }],
     },
   },
 )
